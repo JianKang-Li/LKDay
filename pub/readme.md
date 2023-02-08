@@ -48,6 +48,11 @@
 转换成数组
 返回值：[年 月 日 时 分 秒 星期几]构成的数组
 
++ extend
+对LDay进行扩展
+参数：Lday, oldPro, option
+Lday方法 Day类的旧属性 用户配置项
+
 ## 浏览器使用
 
 ```html
