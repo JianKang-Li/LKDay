@@ -1,3 +1,23 @@
+/**
+* param:String
+* return:{"key":num}
+**/
+function Char_stati(text) {
+    let SArray = new Array()
+    for (let i = 0; i < text.length; i++) {
+        let obj = {}
+        obj[text[i]] = 1
+        let k = 1
+        while (i < text.length && text[i + 1] === text[i]) {
+            k++
+            i++
+        }
+        obj[text[i]] = k
+        SArray.push(obj)
+    }
+    return SArray
+}
+
 class Day {
 
     constructor(date) {
@@ -25,14 +45,55 @@ class Day {
 
     /* 格式化 */
     format(pattern = "YYYY-MM-DD") {
-        switch (pattern) {
-            case "YYYY-MM-DD":
-                return `${this.$Y.toString().padStart(4, "0")}-${this.$M
-                    .toString()
-                    .padStart(2, "0")}-${this.$D.toString().padStart(2, "0")}`;
-            default: {
-                return `${this.$Y}-${this.$M}-${this.$D}`;
+        // switch (pattern) {
+        //     case "YYYY-MM-DD":
+        //         return `${this.$Y.toString().padStart(4, "0")}-${this.$M
+        //             .toString()
+        //             .padStart(2, "0")}-${this.$D.toString().padStart(2, "0")}`;
+
+        //     default: {
+        //         return `${this.$Y}-${this.$M}-${this.$D}`;
+        //     }
+        // }
+        if (!pattern) {
+            return `${this.$Y}-${this.$M}-${this.$D}`;
+        } else {
+            let SArray = Char_stati(pattern)
+            let Tstring = ''
+            for (let i of SArray) {
+                let key = Object.keys(i)[0]
+                let num = i[key]
+                switch (key) {
+                    case 'Y': {
+                        Tstring += `${this.$Y.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    case "M": {
+                        Tstring += `${this.$M.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    case "D": {
+                        Tstring += `${this.$D.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    case "h": {
+                        Tstring += `${this.$h.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    case "m": {
+                        Tstring += `${this.$m.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    case "s": {
+                        Tstring += `${this.$s.toString().padStart(num, "0")}`
+                        break;
+                    }
+                    default: {
+                        Tstring += `${key.repeat(num)}`
+                    }
+                }
             }
+            return Tstring
         }
     }
 
