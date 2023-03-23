@@ -32,3 +32,9 @@
 
 + toArray
 转换成数组
+
++ isBefore
+是否在比较时间之前
+
++ isAfter
+是否在比较时间之后
