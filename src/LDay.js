@@ -3,7 +3,7 @@
  * @param {string} text 需要统计的字符串
  * @return {"key":num} 返回一个对象
 */
-function Char_stati(text) {
+function Char_static(text) {
     let SArray = new Array()
     for (let i = 0; i < text.length; i++) {
         let obj = {}
@@ -32,6 +32,7 @@ class Day {
         this.$s = this.date.getSeconds();
         this.$t = this.date.getTime();
         this.$L = this.isLeap();
+        this.isLdayObj = true
     }
 
     /* 判断是否是闰年 */
@@ -56,7 +57,7 @@ class Day {
         if (!pattern) {
             return `${this.$Y}-${this.$M}-${this.$D}`;
         } else {
-            let SArray = Char_stati(pattern)
+            let SArray = Char_static(pattern)
             let Tstring = ''
             for (let i of SArray) {
                 let key = Object.keys(i)[0]
@@ -139,6 +140,15 @@ class Day {
         const diff = this.$t - firstday.getTime();
         const days = Math.ceil(diff / 86400000);
         return Math.ceil(days / 7) + 1;
+    }
+
+    /* 获取unix时间戳 */
+    /**
+    * @return {Number} unix时间戳
+    *
+    */
+    unix() {
+      return this.date.valueOf()/1000
     }
 
     /* 加 */
@@ -357,6 +367,23 @@ function Lday(date) {
 Lday.extend = (plugin, option) => {
     plugin(Lday, oldPro, option)
 }
+
+// 原型方法
+/**
+* @param {Number} num 时间戳
+* @return {Day} LDay对象
+*/
+Lday.unix = (num) => {
+  return new Day(num);
+}
+
+/**
+* @param {Any} obj 判断参数
+* @return {Boolean} 是否是LDay对象
+*/
+Lday.isLDay = (obj) => {
+  return !!obj.isLdayObj
+} 
 
 
 /* 构造函数 */

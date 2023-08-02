@@ -53,6 +53,16 @@
 参数：Lday, oldPro, option
 Lday方法 Day类的旧属性 用户配置项
 
++ unix
+返回unix时间戳
+
++ LDay.unix(num)
+返回以num为时间戳的LDay对象
+
++ LDay.isLDay
+参数： 任意类型数据
+返回： Boolean 是否是LDay对象
+
 ## 浏览器使用
 
 ```html
