@@ -36,23 +36,36 @@ class Day {
   }
 
   Factory(date) {
-    const length = date.length
+    let length = date.length
 
-    switch (length) {
-      case 3:
-      case 6: {
-        const Y = date[0].toString().padStart(4, '0')
-        const M = date[1].toString().padStart(2, '0')
-        const D = date[2].toString().padStart(2, '0')
+    if (length === 1) {
+      if (Array.isArray(date[0])) {
+        date = date[0]
+        length = date.length
+      }
+    }
 
-        this.date = length === 3 ? new Date(`${Y}-${M}-${D}`) : new Date(`${Y}-${M}-${D} ${date[3]}:${date[4]}:${date[5]}`)
-        break
+    if (length >= 3) {
+      const Y = date[0].toString().padStart(4, '0')
+      const M = date[1].toString().padStart(2, '0')
+      const D = date[2].toString().padStart(2, '0')
+
+      if (length === 3) {
+        this.date = new Date(`${Y}-${M}-${D}`)
+      } else {
+        let temp = new Date(`${Y}-${M}-${D}`)
+        date[3] && temp.setHours(date[3])
+        date[4] && temp.setMinutes(date[4])
+        date[5] && temp.setSeconds(date[5])
+
+        this.date = temp
       }
-      case 1: {
-        this.date = new Date(date[0])
-        break
-      }
-      default: this.date = new Date()
+    }
+    else if (length === 1) {
+      this.date = new Date(date[0])
+    }
+    else {
+      this.date = new Date()
     }
   }
 
@@ -179,12 +192,12 @@ class Day {
   * @return {Lday} 新的Lday对象
   *
   */
-  add(num, key) {
+  add(key, num) {
     let Y = this.$Y;
     let M = this.$M;
     let t = this.$t;
     let nums;
-    const keys = ["y", "year", "M", "month"];
+    const keys = ["Y", "y", "year", "M", "month"];
     let flag = keys.includes(key);
     function addT(numT) {
       let res = t + numT;
@@ -192,6 +205,7 @@ class Day {
     }
     switch (key) {
       case "y":
+      case "Y":
       case "year":
         Y = Y + num;
         break;
@@ -223,8 +237,9 @@ class Day {
       case "millisecond":
         break;
     }
+
     let para = flag
-      ? `${Y} ${M} ${this.$D} ${this.$h}:${this.$m}:${this.$s}`
+      ? [Y, M, this.$D, this.$h, this.$m, this.$s]
       : addT(nums);
 
     return new Day(para);
@@ -237,12 +252,12 @@ class Day {
   * @return {Lday} 新的Lday对象
   *
   */
-  subtract(num, key) {
+  subtract(key, num) {
     let Y = this.$Y;
     let M = this.$M;
     let t = this.$t;
     let nums;
-    const keys = ["y", "year", "M", "month"];
+    const keys = ["Y", "y", "year", "M", "month"];
     let flag = keys.includes(key);
     function subT(num) {
       let res = t - num;
@@ -250,6 +265,7 @@ class Day {
     }
     switch (key) {
       case "y":
+      case "Y":
       case "year":
         Y = Y - num;
         break;
@@ -289,8 +305,9 @@ class Day {
       case "millisecond":
         break;
     }
+
     let para = flag
-      ? `${Y} ${M} ${this.$D} ${this.$h}:${this.$m}:${this.$s}`
+      ? [Y, M, this.$D, this.$h, this.$m, this.$s]
       : subT(nums);
 
     return new Day(para);
@@ -358,7 +375,7 @@ class Day {
       }
       case 'M': {
         this.$M = num
-        this.date.setMonth(num)
+        this.date.setMonth(num - 1)
         break
       }
       case 'D': {
@@ -416,6 +433,15 @@ class Day {
   */
   isAfter(date) {
     return this.$t > (new Day(date)).$t
+  }
+
+  /* 克隆 */
+  /**
+  * @return {Day} 返回新的Day对象
+  *
+  */
+  clone() {
+    return new Day(this.$Y, this.$M, this.$D, this.$h, this.$m, this.$s)
   }
 }
 
