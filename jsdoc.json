@@ -3,6 +3,5 @@
     "include": [
       "src/LDay.js"
     ]
-  },
-  "opts": {}
+  }
 }
