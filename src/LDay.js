@@ -19,7 +19,7 @@ function Char_static(text) {
   return SArray
 }
 
-/** 
+/**
 * 创建一个Day对象
 * @class Day
 * 传入参数可为：<br>
@@ -177,8 +177,8 @@ class Day {
   *
   */
   week() {
-    const firstday = new Date(`${this.$Y} 1 1`);
-    const diff = this.$t - firstday.getTime();
+    const firstDay = new Date(`${this.$Y} 1 1`);
+    const diff = this.$t - firstDay.getTime();
     const days = Math.ceil(diff / 86400000);
     return Math.ceil(days / 7) + 1;
   }
@@ -337,34 +337,26 @@ class Day {
   */
   get(id) {
     let key = id || "";
-    switch (key) {
-      case "y":
-      case "year":
-        return this.$Y;
-      case "M":
-      case "month":
-        return this.$M;
-      case "d":
-      case "date":
-        return this.$D;
-      case "h":
-      case "hour":
-        return this.$h;
-      case "m":
-      case "minute":
-        return this.$m;
-      case "s":
-      case "second":
-        return this.$s;
-      case "ms":
-      case "millisecond":
-        return this.$t;
-      case "w":
-      case "day":
-        return this.$W;
-      default:
-        return this[key];
+    const date = {
+      y: this.$Y,
+      year: this.$Y,
+      M: this.$M,
+      month: this.$M,
+      d: this.$D,
+      date: this.$D,
+      h: this.$h,
+      hour: this.$h,
+      m: this.$m,
+      minute: this.$m,
+      s: this.$s,
+      second: this.$s,
+      ms: this.$t,
+      millisecond: this.$t,
+      W: this.$W,
+      day: this.$W
     }
+
+    return date[key]
   }
 
   /* 设置数据 */
