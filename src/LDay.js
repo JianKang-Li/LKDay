@@ -450,6 +450,14 @@ class Day {
   clone() {
     return new Day(this.$Y, this.$M, this.$D, this.$h, this.$m, this.$s)
   }
+
+  /* 获取当前时间时区 */
+  /**
+  * @return {number} 返回时区小时数
+  **/
+  getTimeZone() {
+    return this.date.getTimezoneOffset() / 60
+  }
 }
 
 
