@@ -15,6 +15,7 @@ module.exports = {
         libraryTarget: "umd",
         libraryExport: 'default',
         clean: true,
+        globalObject: 'this'
     } : {
         path: undefined,
         filename: "[name].[contenthash].js",//打包后的文件名称
