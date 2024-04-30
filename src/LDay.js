@@ -29,23 +29,43 @@ function Char_static(text) {
 class Day {
   constructor() {
     this.Factory([...arguments])
-    this.Months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-    this.$Y = this.date.getFullYear();
-    this.$M = this.date.getMonth() + 1;
-    this.$D = this.date.getDate();
-    this.$W = this.date.getDay();
-    this.$h = this.date.getHours();
-    this.$m = this.date.getMinutes();
-    this.$s = this.date.getSeconds();
-    this.$t = this.date.getTime();
-    this.$L = this.isLeap();
+    this.Months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+    this.$Y = this.date.getFullYear()
+    this.$M = this.date.getMonth() + 1
+    this.$D = this.date.getDate()
+    this.$W = this.date.getDay()
+    this.$h = this.date.getHours()
+    this.$m = this.date.getMinutes()
+    this.$s = this.date.getSeconds()
+    this.$t = this.date.getTime()
+    this.$L = this.isLeap()
     this.isLdayObj = true
+    this.rules = {
+      y: 'y',
+      year: 'Y',
+      M: 'M',
+      Month: 'M',
+      d: 'd',
+      day: 'd',
+      h: 'h',
+      hour: 'h',
+      m: 'm',
+      minute: 'm',
+      s: 's',
+      second: 's',
+      ms: 'ms',
+      millisecond: 'ms'
+    }
   }
 
   Factory(date) {
     let length = date.length
 
     if (length === 1) {
+      if (date[0].isLdayObj) {
+        this.date = date[0].date
+        return
+      }
       if (Array.isArray(date[0])) {
         date = date[0]
         length = date.length
@@ -76,27 +96,27 @@ class Day {
     }
   }
 
-  /* 判断是否是闰年 */
   /**
+  * 判断是否是闰年
   * @return {Boolean} 是否是闰年
   *
   */
   isLeap() {
-    let flag = (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0;
+    let flag = (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0
     if (flag) {
-      this.Months[1] = 29;
+      this.Months[1] = 29
     }
-    return (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0;
+    return (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0
   }
 
-  /* 格式化 */
   /**
+  * 格式化
   * @param {String} pattern 输入格式化字符串
   * @return {String} 格式化后的字符串时间
   */
   format(pattern = "YYYY-MM-DD") {
     if (!pattern) {
-      return `${this.$Y}-${this.$M}-${this.$D}`;
+      return `${this.$Y}-${this.$M}-${this.$D}`
     } else {
       let SArray = Char_static(pattern)
       let Tstring = ''
@@ -106,27 +126,27 @@ class Day {
         switch (key) {
           case 'Y': {
             Tstring += `${this.$Y.toString().padStart(num, "0")}`
-            break;
+            break
           }
           case "M": {
             Tstring += `${this.$M.toString().padStart(num, "0")}`
-            break;
+            break
           }
           case "D": {
             Tstring += `${this.$D.toString().padStart(num, "0")}`
-            break;
+            break
           }
           case "h": {
             Tstring += `${this.$h.toString().padStart(num, "0")}`
-            break;
+            break
           }
           case "m": {
             Tstring += `${this.$m.toString().padStart(num, "0")}`
-            break;
+            break
           }
           case "s": {
             Tstring += `${this.$s.toString().padStart(num, "0")}`
-            break;
+            break
           }
           default: {
             Tstring += `${key.repeat(num)}`
@@ -137,54 +157,54 @@ class Day {
     }
   }
 
-  /* 是否相同时间 */
   /**
+  * 是否相同时间
   * @param {Lday} 另一个Lday对象
   * @return {Boolean} 是否相同
   */
   isSame(otherDate) {
-    return this.$t - otherDate.$t === 0;
+    return this.$t - otherDate.$t === 0
   }
 
-  /* 获取是一周第几天 */
   /**
+  * 获取是一周第几天
   * @return {Number} 是一周中的第几天
   *
   */
   day() {
-    return this.$W === 0 ? 7 : this.$W;
+    return this.$W === 0 ? 7 : this.$W
   }
 
-  /* 一年内第几天 */
   /**
+  * 一年内第几天
   * @return {Number} 是一年中的第几天
   *
   */
   dayOfYear() {
-    let num = this.$D;
+    let num = this.$D
     for (let i = 0; i < this.$M - 1; i++) {
-      num += this.Months[i];
+      num += this.Months[i]
     }
     if (this.$L) {
-      num++;
+      num++
     }
-    return num;
+    return num
   }
 
-  /* 一年内第几周 */
   /**
+  * 一年内第几周
   * @return {Number} 一年内的第几周
   *
   */
   week() {
-    const firstDay = new Date(`${this.$Y} 1 1`);
-    const diff = this.$t - firstDay.getTime();
-    const days = Math.ceil(diff / 86400000);
-    return Math.ceil(days / 7) + 1;
+    const firstDay = new Date(`${this.$Y} 1 1`)
+    const diff = this.$t - firstDay.getTime()
+    const days = Math.ceil(diff / 86400000)
+    return Math.ceil(days / 7) + 1
   }
 
-  /* 获取unix时间戳 */
   /**
+  * 获取unix时间戳
   * @return {Number} unix时间戳
   *
   */
@@ -192,94 +212,34 @@ class Day {
     return this.date.valueOf() / 1000
   }
 
-  /* 加 */
   /**
+  * 加
   * @param {Number} num 数量
   * @param {String} key 关键字
   * @return {Lday} 新的Lday对象
   *
   */
   add(key, num) {
-    let Y = this.$Y;
-    let M = this.$M;
-    let t = this.$t;
-    let nums;
-    const keys = ["Y", "y", "year", "M", "month"];
-    let flag = keys.includes(key);
+    let Y = this.$Y
+    let M = this.$M
+    let t = this.$t
+    let nums
+    const keys = ["Y", "y", "year", "M", "month"]
+    let flag = keys.includes(key)
     function addT(numT) {
-      let res = t + numT;
-      return res;
+      let res = t + numT
+      return res
     }
-    switch (key) {
+    switch (this.rules[key]) {
       case "y":
-      case "Y":
-      case "year":
-        Y = Y + num;
-        break;
+        Y = Y + num
+        break
       case "M":
-      case "month":
-        M = M + num;
+        M = M + num
         if (M > 12) {
-          Y = Y + Math.floor(M / 12);
-          M = (M % 12);
-        }
-        break;
-      case "d":
-      case "date":
-        nums = num * 1000 * 60 * 60 * 24;
-        break;
-      case "h":
-      case "hour":
-        nums = num * 1000 * 60 * 60;
-        break;
-      case "m":
-      case "minute":
-        nums = num * 1000 * 60;
-        break;
-      case "s":
-      case "second":
-        nums = num * 1000;
-        break;
-      case "ms":
-      case "millisecond":
-        break;
-    }
-
-    let para = flag
-      ? [Y, M, this.$D, this.$h, this.$m, this.$s]
-      : addT(nums);
-
-    return new Day(para);
-  }
-
-  /* 减 */
-  /**
-  * @param {Number} num 数量
-  * @param {String} key 关键字
-  * @return {Lday} 新的Lday对象
-  *
-  */
-  subtract(key, num) {
-    let Y = this.$Y;
-    let M = this.$M;
-    let t = this.$t;
-    let nums;
-    const keys = ["Y", "y", "year", "M", "month"];
-    let flag = keys.includes(key);
-    function subT(num) {
-      let res = t - num;
-      return res;
-    }
-    switch (key) {
-      case "y":
-      case "Y":
-      case "year":
-        Y = Y - num;
-        break;
-      case "M":
-      case "month":
-        M = M - num;
-        if (M < 0) {
+          Y = Y + Math.floor(M / 12)
+          M = (M % 12)
+        } else if (M < 0) {
           let n = Math.floor(M / 12);
           Y = Y + n;
           M = Math.abs(n) * 12 + M;
@@ -291,52 +251,58 @@ class Day {
           Y = Y - 1;
           M = 12;
         }
-        break;
+        break
       case "d":
-      case "date":
-        nums = num * 1000 * 60 * 60 * 24;
-        break;
+        nums = num * 1000 * 60 * 60 * 24
+        break
       case "h":
-      case "hour":
-        nums = num * 1000 * 60 * 60;
-        break;
+        nums = num * 1000 * 60 * 60
+        break
       case "m":
-      case "minute":
-        nums = num * 1000 * 60;
-        break;
+        nums = num * 1000 * 60
+        break
       case "s":
-      case "second":
-        nums = num * 1000;
-        break;
+        nums = num * 1000
+        break
       case "ms":
-      case "millisecond":
-        break;
+        break
     }
 
     let para = flag
       ? [Y, M, this.$D, this.$h, this.$m, this.$s]
-      : subT(nums);
+      : addT(nums)
 
-    return new Day(para);
+    return new Day(para)
   }
 
-  /* 获取本月天数 */
   /**
+  * 减
+  * @param {Number} num 数量
+  * @param {String} key 关键字
+  * @return {Lday} 新的Lday对象
+  *
+  */
+  subtract(key, num) {
+    return this.add(key, num * -1)
+  }
+
+  /**
+  * 获取本月天数
   * @return {Number} 本月的天数
   *
   */
   daysInMonth() {
-    return this.Months[this.$M - 1];
+    return this.Months[this.$M - 1]
   }
 
-  /* 获取数据 */
   /**
+  * 获取数据
   * @param {String} id 关键字
   * @return {number} 新的Lday对象数据
   *
   */
   get(id) {
-    let key = id || "";
+    let key = id || ""
     const date = {
       y: this.$Y,
       year: this.$Y,
@@ -359,8 +325,8 @@ class Day {
     return date[key]
   }
 
-  /* 设置数据 */
   /**
+  * 设置数据
   * @param {String} key 关键字
   * @param {Number| String} num 设置的值
   *
@@ -400,8 +366,8 @@ class Day {
     }
   }
 
-  /* 格式转换 */
   /**
+  * 格式转换
   * @return {Array} 年 月 日 时 分 秒 星期几(从0开始)组成的数组
   *
   */
@@ -415,10 +381,11 @@ class Day {
       this.$m,
       this.$s,
       this.$W === 0 ? 7 : this.$W,
-    ];
+    ]
   }
 
   /**
+  * 是否为前面的时间
   * @param {String|Date} date 比较时间点
   * @return {Boolean} 比较结果
   */
@@ -427,6 +394,7 @@ class Day {
   }
 
   /**
+  * 是否为后面的时间
   * @param {String|Date} date 比较时间点
   * @return {Boolean} 比较结果
   */
@@ -434,8 +402,8 @@ class Day {
     return this.$t > (new Day(date)).$t
   }
 
-  /* 克隆 */
   /**
+  * 克隆新对象
   * @return {Day} 返回新的Day对象
   *
   */
@@ -443,12 +411,29 @@ class Day {
     return new Day(this.$Y, this.$M, this.$D, this.$h, this.$m, this.$s)
   }
 
-  /* 获取当前时间时区 */
   /**
+  * 获取当前时间时区
   * @return {number} 返回时区小时数
   **/
   getTimeZone() {
     return this.date.getTimezoneOffset() / 60
+  }
+
+  /**
+  * 获取时间差
+  * @return {number} 返回时间差值
+  **/
+  diff(date, key) {
+    const diffMs = this.$t - (new Day(date)).$t
+    const transform = {
+      d: 1000 * 60 * 60 * 24,
+      m: 1000 * 60,
+      s: 1000,
+      ms: 1
+    }
+    const format = transform[this.rules[key]] || transform['s']
+
+    return diffMs / format
   }
 }
 
@@ -456,7 +441,7 @@ class Day {
 const oldPro = Day.prototype
 
 function Lday() {
-  return new Day(...arguments);
+  return new Day(...arguments)
 }
 
 Lday.extend = (plugin, option) => {
@@ -469,7 +454,7 @@ Lday.extend = (plugin, option) => {
 * @return {Day} LDay对象
 */
 Lday.unix = (num) => {
-  return new Day(num);
+  return new Day(num)
 }
 
 /**
