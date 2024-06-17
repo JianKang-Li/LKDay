@@ -13,8 +13,5 @@ dayjs.extend(toArray);
 Lday.extend(testPlugin)
 Lday.extend(Plugin2)
 // console.log(Lday().dd());
-let date1 = Lday(2024, 12, 1, 8, 20, 1);
-let date2 = dayjs('0050-02-01');
-console.log(date1)
-let date3 = date1.clone()
-console.log(date1.getTimeZone())
+let date1 = Lday();
+console.log(date1.diff(date1.subtract('m', 10), 'ms'))
