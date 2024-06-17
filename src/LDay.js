@@ -421,6 +421,8 @@ class Day {
 
   /**
   * 获取时间差
+  * @param {string | date | Lday} 比较日期
+  * @param {string} 转换成的数据 支持 天，分，秒，毫秒
   * @return {number} 返回时间差值
   **/
   diff(date, key) {
