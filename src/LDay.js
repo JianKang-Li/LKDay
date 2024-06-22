@@ -29,25 +29,18 @@ function Char_static(text) {
 class Day {
   constructor() {
     this.Factory([...arguments])
-    this.Months = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-    this.$Y = this.date.getFullYear()
-    this.$M = this.date.getMonth() + 1
-    this.$D = this.date.getDate()
-    this.$W = this.date.getDay()
-    this.$h = this.date.getHours()
-    this.$m = this.date.getMinutes()
-    this.$s = this.date.getSeconds()
-    this.$t = this.date.getTime()
-    this.$L = this.isLeap()
+    this.update()
     this.isLdayObj = true
     this.rules = {
       y: 'y',
-      year: 'Y',
+      Y: 'y',
+      year: 'y',
       M: 'M',
       Month: 'M',
       d: 'd',
       day: 'd',
       h: 'h',
+      H: 'h',
       hour: 'h',
       m: 'm',
       minute: 'm',
@@ -78,9 +71,9 @@ class Day {
       const D = date[2].toString().padStart(2, '0')
 
       if (length === 3) {
-        this.date = new Date(`${Y}-${M}-${D}`)
+        this.date = new Date(Y, M - 1, D)
       } else {
-        let temp = new Date(`${Y}-${M}-${D}`)
+        let temp = new Date(Y, M - 1, D)
         date[3] && temp.setHours(date[3])
         date[4] && temp.setMinutes(date[4])
         date[5] && temp.setSeconds(date[5])
@@ -96,16 +89,27 @@ class Day {
     }
   }
 
+  // 内部更新数据
+  update() {
+    this.$Y = this.date.getFullYear()
+    this.$M = this.date.getMonth() + 1
+    this.$D = this.date.getDate()
+    this.$W = this.date.getDay()
+    this.$h = this.date.getHours()
+    this.$m = this.date.getMinutes()
+    this.$s = this.date.getSeconds()
+    this.$t = this.date.getTime()
+    this.$ms = this.date.getMilliseconds()
+    this.$L = this.isLeap()
+    this.Months = [31, this.$L ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  }
+
   /**
   * 判断是否是闰年
   * @return {Boolean} 是否是闰年
   *
   */
   isLeap() {
-    let flag = (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0
-    if (flag) {
-      this.Months[1] = 29
-    }
     return (this.$Y % 4 === 0 && this.$Y !== 0) || this.$Y % 400 === 0
   }
 
@@ -136,7 +140,7 @@ class Day {
             Tstring += `${this.$D.toString().padStart(num, "0")}`
             break
           }
-          case "h": {
+          case "H": {
             Tstring += `${this.$h.toString().padStart(num, "0")}`
             break
           }
@@ -185,22 +189,33 @@ class Day {
     for (let i = 0; i < this.$M - 1; i++) {
       num += this.Months[i]
     }
-    if (this.$L) {
-      num++
-    }
     return num
   }
 
   /**
   * 一年内第几周
-  * @return {Number} 一年内的第几周
+  * @return {Number} 一年内的第几周 (周一为一周开始)
   *
   */
   week() {
-    const firstDay = new Date(`${this.$Y} 1 1`)
-    const diff = this.$t - firstDay.getTime()
-    const days = Math.ceil(diff / 86400000)
-    return Math.ceil(days / 7) + 1
+    let days = this.$D
+    //那一天是那一年中的第多少天
+    for (let i = 0; i < this.$M - 1; i++) {
+      days += this.Months[i]
+    }
+
+    //那一年第一天是星期几
+    const yearFirstDay = new Date(this.$Y, 0, 1).getDay() || 7
+    let week = null;
+
+    if (yearFirstDay == 1) {
+      week = Math.ceil(days / 7)
+    } else {
+      days -= (7 - yearFirstDay)
+      week = Math.ceil(days / 7)
+    }
+
+    return week;
   }
 
   /**
@@ -306,8 +321,8 @@ class Day {
     const date = {
       y: this.$Y,
       year: this.$Y,
-      M: this.$M,
-      month: this.$M,
+      M: this.$M - 1,
+      month: this.$M - 1,
       d: this.$D,
       date: this.$D,
       h: this.$h,
@@ -332,10 +347,11 @@ class Day {
   *
   */
   set(key, num) {
-    switch (key) {
-      case 'Y': {
+    switch (this.rules[key]) {
+      case 'y': {
         this.$Y = num
         this.date.setFullYear(num)
+        this.$L = this.isLeap()
         break
       }
       case 'M': {
@@ -343,7 +359,7 @@ class Day {
         this.date.setMonth(num - 1)
         break
       }
-      case 'D': {
+      case 'd': {
         this.$D = num
         this.date.setDate(num)
         break
@@ -364,6 +380,8 @@ class Day {
         break
       }
     }
+
+    this.update()
   }
 
   /**
@@ -372,15 +390,16 @@ class Day {
   *
   */
   toArray() {
-    // 年 月 日 时 分 秒 星期几(从0开始)
+    // 年 月 日 时 分 秒 毫秒 星期几(从0开始)
     return [
       this.$Y,
-      this.$M,
+      this.$M - 1,
       this.$D,
       this.$h,
       this.$m,
       this.$s,
-      this.$W === 0 ? 7 : this.$W,
+      this.$ms,
+      this.$W,
     ]
   }
 
@@ -429,6 +448,7 @@ class Day {
     const diffMs = this.$t - (new Day(date)).$t
     const transform = {
       d: 1000 * 60 * 60 * 24,
+      h: 1000 * 60 * 60,
       m: 1000 * 60,
       s: 1000,
       ms: 1
@@ -470,3 +490,4 @@ Lday.isLDay = (obj) => {
 
 /* 构造函数 */
 export default Lday
+
